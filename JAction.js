@@ -1,191 +1,232 @@
-/*
-  JAction version: 1.0.0.
-  author: Erlangga,
-  DO NOT COPY PASTE IT'S ILLEGAL
+(function (parent, undefined) {
+  /* 
+
+JAction2
+made by Erlangga
+! DO NOT COPY PASTE IT'S ILLEGAL!
+
 */
+
+  /**
   
-//main function / home of JAction
-
-/*
+  @namespace JAction
   
-  DOM API...
-  ENJOY
+  DOM API'S VERSION 2 FROM JACTION2
   
-*/
-(function (root, undefined) {
-    "use_strict"
-    
-    //JAction function
-    function JAction(sel) {
-      
-        //check, if type of sel is a function
-        if (typeof sel === "function") {
-          //then check the document ready or not
-            if (document.readyState === "complete" || document.readyState === "interactive") {
-              
-              //if ready set timeout sel, 1 ms
-                setTimeout(sel, 1)
-                
-              //else
-            } else {
-              //add event to the browser when the dom content is loaded do sel
-                document.addEventListener("DOMContentLoaded", sel)
-            }
-            
-           //main block 
-        } else {
-          
-          //main method
-            const self = {
-              //get element from DOM (document object model), this method will select first element from the DOM tree
-                el: document.querySelector(sel),
-                
-                //html method, for manipulate html conetent from element
-                html: function (html) {
-                  
-                  //if user give html code
-                    if (html) {
-                     //then update element html content
-                        self.el.innerHTML = html
-                    } 
-                    // if user NOT give html code
-                    else {
-                     //return element html content
-                        return self.el.innerHTML
-                    }
-                    // return self for chaining method
-                    return self
-                },
-                
-                //text method, for manipulate text from element
-                text: function (text) {
-                  
-                  //if user give the text
-                    if (text) {
-                      //will update element text content
-                        self.el.innerText = text
-                    } else {
-                      
-                      //if user NOT give text
-                      //return text content of the element
-                        return self.el.innerText
-                    }
-                    
-                    // return self for chaining method
-                    return self
-                },
-                
-                //appendText method, append text content for element
-                appendText: function (text) {
-                    self.el.innerText += text
-                },
-                
-                //appendHTML method, append html content for element
-                appendHTML: function (html) {
-                    self.el.innerHTML += html
-                },
-                
-                //event method(my favorite method)
-                event: function (events, cb) {
-                    self.el.addEventListener(events, cb)
-                },
-                
-                //hover method, when you mouse hover the element, it will change
-                hover: function (cb1, cb2) {
-                    //using event method
-                    self.event("mouseenter", cb1)
-                    self.event("mouseleave", cb2)
-                },
-                
-                //css(my favorite method), for styling element
-                css: function (...css) {
-                  
-                  //if the css length greater than 2, return element style
-                    if (css.length > 2) {
-                        return self.el.style;
-                    } else if (typeof css[0] === "string") {
-                        this.el.style[css[0]] = css[1]
-                    } else if (typeof css[0] === "object") {
-                        var css = css[0]
-                        for (const [key, value] of Object.entries(css)) {
-                            self.el.style[key] = value
-                        }
-                    } else {
-                        console.error(new Error("JActionError: type of css must be an object or string. Received: ", typeof css[0]))
-                    }
+  */
+  // main object
+  const JAction = {}
 
-                    return self
-                },
+  JAction.whenReady = function (functionWhenTheDOMIsLoaded) {
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      setTimeout(functionWhenTheDOMIsLoaded, 1)
+    } else {
+      document.addEventListener("DOMContentLoaded", functionWhenTheDOMIsLoaded)
+    }
+  }
 
-                value: function () {
-                    return self.el.value
-                },
 
-                click: function (cb) {
-                    /** 
-                     * @function click allow you add click event to element
-                    */
-                    self.event("click", cb)
-                    return self
-                },
+  // this function will select all current element (id)
+  JAction.select = function (id) {
+    if (typeof id === "object") {
+      return [id]
+    } else {
+      return document.querySelectorAll(id)
+    }
+  }
 
-                toggle: function () {
-                    if (self.el.style.display === "none") {
-                        self.el.style.display = "block"
-                    } else {
-                        self.el.style.display = "none"
-                    }
-                    return self
-                },
+  // select specific element 
+  JAction.selectSpecific = function (id) {
+    if (typeof id === "object") {
+      return [id]
+    } else {
+      return document.querySelector(id)
+    }
+  }
 
-                toggleClass: function (className) {
-                    if (!className) {
-                        return
-                    } else {
-                        self.el.classList.toggle(className)
-                    }
-                },
 
-                setAttr: function (attr) {
-                    if (attr) {
-                        for (const [attribute, value] of Object.entries(attr)) {
-                            self.el.setAttribute(attribute, value)
-                        }
-                    } else if (typeof attr !== "string") {
-                        console.error(new Error("JActionError: type of attr must be an object! received: ", typeof attr))
-                    }
-                    return self
-                },
+  // object style 
+  JAction.style = function (id, style) {
+    let el = JAction.select(id)
+    var i, ell, nel;
+    ell = el.length
+    for (i = 0; i < ell; i++) {
+      nel = el[i]
+      for (const [prop, val] of Object.entries(style)) {
+        nel.style[prop] = val
+      }
+    }
+  }
 
-                getAttr: function (attrName) {
-                    if (attrName) {
-                        return self.el.getAttribute(attrName)
-                    } else {
-                        console.error(new Error("JActionError: type of attr must be an string! received: ", typeof attr))
-                    }
+  // style inline
+  JAction.styleInline = function (id, prop, val, priority = "") {
+    let el = JAction.select(id)
+    var i, ell, nel;
+    ell = el.length
+    for (i = 0; i < ell; i++) {
+      nel = el[i]
+      nel.style.setProperty(prop, val, priority)
+    }
+  }
 
-                    return self
-                },
-                
-                hide: function (){
-                  self.css ("display","none")
-                  return self
-                },
-                
-                show: function () {
-                  self.css("display","block")
-                  return self
-                }
-            }
+  JAction.getAttr = function (id, propertyName) {
+    let el = JAction.selectSpecific(id)
+    if (typeof propertyName !== "string") {
+      throw new Error("JActionError: type of attr name must be a string!")
+    }
+    return el.getAttribute(propertyName)
+  }
 
-            return self
-        }
+
+  JAction.setAttr = function (id, prop, val) {
+    let el = JAction.selectSpecific(id)
+    if (typeof prop !== "string") {
+      throw new Error("JActionError: type of prop name must be a string!")
+    }
+    el.setAttribute(prop, val)
+  }
+
+  JAction.setEvent = function (id, event, fn) {
+    var el = JAction.selectSpecific(id)
+    if (typeof event !== "string") {
+      throw new Error("JActionError: type of event must be a string!")
+    }
+    el.addEventListener(event, fn)
+  }
+
+  JAction.setHTML = function (id, html) {
+    let el = JAction.selectSpecific(id)
+    el.innerHTML = html
+  }
+
+  JAction.setText = function (id, text) {
+    let el = JAction.selectSpecific(id)
+    el.innerText = text
+  }
+
+  JAction.getHTML = function (id) {
+    let el = JAction.selectSpecific(id)
+    return el.innerHTML
+  }
+
+  JAction.getText = function (id) {
+    let el = JAction.selectSpecific(id)
+    if (typeof el.innerText === "undefined") {
+      return el.textContent
+    } else {
+      return el.innerText
+    }
+  }
+
+  JAction.appendHTML = function (id, html) {
+    let el = JAction.selectSpecific(id)
+    el.innerHTML += html
+  }
+
+  JAction.appendText = function (id, text) {
+    let el = JAction.selectSpecific(id)
+    el.innerText += text
+  }
+
+  JAction.getValue = function (id) {
+    let el = JAction.selectSpecific(id)
+    return el.value
+  }
+
+  JAction.hideElement = function (id) {
+    JAction.styleInline(id, "display", "none")
+  }
+
+
+  JAction.showElement = function (id) {
+    JAction.styleInline(id, "display", "block")
+  }
+
+  JAction.toggle = function (id) {
+    let el = JAction.selectSpecific(id)
+    if (el.style.display == "none") {
+      JAction.styleInline(id, "display", "block")
+    } else {
+      JAction.styleInline(id, "display", "none")
+    }
+  }
+
+  JAction.createElement = function (el, attr, value) {
+    let tn, cel, vl;
+    tn = el.toUpperCase()
+    cel = document.createElement(tn)
+    for (const [attrn, attrv] of Object.entries(attr)) {
+      cel.setAttribute(attrn, attrv)
+    }
+    cel.innerHTML = value
+
+    return cel
+  }
+
+  JAction.appendElement = function (id, nodeElement) {
+    let el = JAction.selectSpecific(id)
+    el.appendChild(nodeElement)
+  }
+
+  JAction.setStorageItem = function (key, value) {
+    localStorage.setItem(key, value)
+  }
+
+  JAction.getStorageItem = function (key) {
+    let results;
+    results = localStorage.getItem(key)
+    return results
+  }
+
+
+  JAction.removeStorageItem = function (key) {
+    localStorage.removeItem(key)
+  }
+
+
+  // ajax object 
+  JAction.doAjax = function (ajax) {
+    if (window.XMLHttpRequest) {
+      notIE(ajax)
+    } else {
+      ifIE(ajax)
+    }
+  }
+
+  parent.jct = JAction
+
+
+  function notIE(ajax) {
+    let xml = new XMLHttpRequest()
+    const url = ajax.url
+    const method = ajax.method
+
+    xml.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        const data = this.responseText
+        ajax.action(data)
+      }
     }
 
+    xml.open(method, url, true)
+    xml.send()
+  }
 
+  function ifIE(ajax) {
+    let xml = new ActiveXObject("Microsoft.XMLHTTP")
+    const url = ajax.url
+    const method = ajax.method
 
-    root.JAction = JAction
-    root.jct = JAction
+    xml.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        const data = this.responseText
+        ajax.action(data)
+      }
+    }
 
+    xml.open(method, url, true)
+    xml.send()
 
+  }
 }(window))
+
