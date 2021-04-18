@@ -193,7 +193,32 @@ made by Erlangga
     }
   }
 
+
+  JAction.hideAll = function (id){
+    let el,ell,i,nel;
+    i=0;
+    el = JAction.select (id)
+    ell = el.length;
+    for (; i < ell; i++){
+      nel = el[i]
+      JAction.styleInline (nel,"display","none")
+    }
+  }
+  
+  JAction.showAll = function (id){
+    let el,ell,i,nel;
+    i=0;
+    el = JAction.select (id)
+    ell = el.length;
+    for (; i < ell; i++){
+      nel = el[i]
+      JAction.styleInline (nel,"display","block")
+    }
+  }
+  
+
   parent.jct = JAction
+  parent.JAction = JAction
 
 
   function notIE(ajax) {
