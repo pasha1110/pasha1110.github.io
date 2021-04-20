@@ -268,6 +268,53 @@ made by Erlangga
       nel.innerText += text
     }
   }
+
+
+
+   JAction.setEventAll = function (id,event,fn){
+     let i,el,ell,nel;
+     el = JAction.select (id)
+     ell = el.length
+     i = 0;
+     for ( ; i < ell; i++){
+       nel = el[i]
+       nel.addEventListener (event,fn)
+     }
+   }
+   
+   JAction.moveElement = function (id,target){
+     const el = JAction.selectSpecific (id)
+     const elTarget = JAction.selectSpecific (target)
+     elTarget.appendChild (el)
+   }
+   
+   JAction.styleSpecific = function (id,prop,val,priority=""){
+     let el = JAction.selectSpecific (id)
+     el.style.setProperty (prop,val,priority)
+   }
+   
+   JAction.cssSpecific = function (id,style){
+     let el = JAction.selectSpecific (id)
+     for (const [prop,val] of Object.entries (style)){
+       el.style[prop] = val
+     }
+   }
+   
+   JAction.toggleClass = function (id,classname){
+     let el = JAction.selectSpecific (id)
+     el.classList.toggle (classname)
+   }
+   
+   JAction.toggleClassAll = function (id,classname){
+     let i,el,ell,nel;
+     el = JAction.select (id)
+     ell = el.length
+     i = 0;
+     for ( ; i < ell; i++){
+       nel = el[i]
+       nel.classList.toggle (classname)
+     }
+   }
   
 
   parent.jct = JAction
