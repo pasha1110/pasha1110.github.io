@@ -216,6 +216,59 @@ made by Erlangga
     }
   }
   
+ //like JAction.setAttr, but this function will select all the selected html elements 
+  JAction.setAttrAll = function (id,attr, value){
+    let el = JAction.select(id)
+    var i, ell, nel;
+    ell = el.length
+    for (i = 0; i < ell; i++) {
+      nel = el[i]
+      nel.setAttribute (attr,value)
+    }
+  }
+  
+  //like JAction.setHTML, but for all selected elements
+  JAction.setHTMLAll = function (id,html){
+    let el = JAction.select(id)
+    var i, ell, nel;
+    ell = el.length
+    for (i = 0; i < ell; i++) {
+      nel = el[i]
+      nel.innerHTML = html
+    }
+  }
+  
+  //like JAction.setText, but for all selected elements
+  JAction.setTextAll = function (id,text){
+    let el = JAction.select(id)
+    var i, ell, nel;
+    ell = el.length
+    for (i = 0; i < ell; i++) {
+      nel = el[i]
+      nel.innerText = text
+    }
+  }
+  
+  JAction.appendHTMLAll = function (id,html){
+    let el = JAction.select(id)
+    var i, ell, nel;
+    ell = el.length
+    for (i = 0; i < ell; i++) {
+      nel = el[i]
+      nel.innerHTML += html
+    }
+  }
+  
+  JAction.appendTextAll = function (id,text){
+    let el = JAction.select(id)
+    var i, ell, nel;
+    ell = el.length
+    for (i = 0; i < ell; i++) {
+      nel = el[i]
+      nel.innerText += text
+    }
+  }
+  
 
   parent.jct = JAction
   parent.JAction = JAction
