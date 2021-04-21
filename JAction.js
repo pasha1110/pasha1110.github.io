@@ -387,15 +387,6 @@ or in the web:
     })
   }
 
-  JAction.toggleFade = function (id, dur = "1000") {
-    let el = JAction.getStyle(id)
-    if (el.opacity == "0" || el.opacity == "") {
-      JAction.fadeIn(id, dur + "ms")
-    } else {
-      JAction.fadeOut(id, dur + "ms")
-    }
-  }
-
   JAction.whenClick = function (id, fn) {
     JAction.setEvent(id, "click", fn)
   }
@@ -446,4 +437,3 @@ or in the web:
 
   }
 }(window))
-
