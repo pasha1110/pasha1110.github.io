@@ -19,7 +19,7 @@ or in the web:
   DOM API'S VERSION 2 FROM JACTION2
   
   */
-  // main object
+  //PRIVATE and main Object of JAction
   const JAction = {}
 
 
@@ -112,7 +112,7 @@ or in the web:
 
     // if the propertyName is not a string
     if (typeof propertyName !== "string") {
-      throw new Error("JActionError: type of attr name must be a string!")
+      throw new Error("JActionError: type of attr name must be a string! receive",typeof propertyName)
     }
     return el.getAttribute(propertyName)
   }
@@ -126,7 +126,7 @@ or in the web:
 
     // if the prop is not a string 
     if (typeof prop !== "string") {
-      throw new Error("JActionError: type of prop name must be a string!")
+      throw new Error("JActionError: type of prop name must be a string! receive",typeof prop)
     }
     el.setAttribute(prop, val)
   }
@@ -139,7 +139,7 @@ or in the web:
 
     // if event is not a string
     if (typeof event !== "string") {
-      throw new Error("JActionError: type of event must be a string!")
+      throw new Error("JActionError: type of event must be a string! receive",typeof event)
     }
     el.addEventListener(event, fn)
   }
@@ -391,7 +391,7 @@ or in the web:
     JAction.setEvent(id, "click", fn)
   }
 
-  JAction.isClicked - function (id, fn) {
+  JAction.whenAllClicked = function (id, fn) {
     JAction.setEventAll(id, "click", fn)
   }
 
@@ -399,8 +399,60 @@ or in the web:
     JAction.setEventAll(id, "mouseenter", f1)
     JAction.setEventAll(id, "mouseleave", f2)
   }
+  
+  JAction.createAttr = function (attrName,attrValue){
+    let ca, cv;
+    cv = attrValue
+    ca = document.createAttribute (attrName)
+    ca.value = cv
 
+    return ca
+  }
+  
+  JAction.removeAttr = function (id,attrName){
+    let el = JAction.selectSpecific (id)
+    el.removeAttribute (attrName)
+  }
+  
+  JAction.setClass = function (id,className){
+    let elId = JAction.selectSpecific (id)
+    let createClass = JAction.createAttr ("class",className)
+  
+    elId.setAttributeNode (createClass)
+  }
+  
+  JAction.getClass = function (id){
+    return JAction.getAttr (id,"class")
+  }
+  
+  JAction.setId = function (id,idName){
+    let elId = JAction.selectSpecific (id)
+    let createId = JAction.createAttr ("id",idName)
+    
+    elId.setAttributeNode (createId)
+  }
+  
+  JAction.getId = function (id){
+    return JAction.getAttr (id,"id")
+  }
+  
+  JAction.setLink = function (id,link){
+    let elid = JAction.selectSpecific (id)
+    let createHref = JAction.createAttr ("href",link)
+    
+    elid.setAttributeNode (createHref)
+  }
+  
+  JAction.getLink = function (id){
+    return JAction.getAttr (id,"href")
+  }
+
+  //parent is a public Object, embedded on window Object
+
+  //parent.jct is an ALIAS of JAction
   parent.jct = JAction
+
+  //parent.JAction is the default Object
   parent.JAction = JAction
 
 
