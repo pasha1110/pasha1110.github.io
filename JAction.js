@@ -447,6 +447,15 @@ or in the web:
     return JAction.getAttr (id,"href")
   }
 
+   JAction.toggleFade = function (id,dur=1000){
+     let el = JAction.selectSpecific (id)
+     if (el.style.opacity == "0"){
+       JAction.fadeIn (id,dur)
+     }else {
+       JAction.fadeOut (id,dur)
+     }
+   }
+
   //parent is a public Object, embedded on window Object
 
   //parent.jct is an ALIAS of JAction
