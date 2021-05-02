@@ -447,11 +447,6 @@ or in the web:
     return JAction.getAttr (id,"href")
   }
 
-  JAction.getValue = function (target){
-    let el = JAction.selectSpecific (target)
-    return el.value
-  }
-
   //parent is a public Object, embedded on window Object
 
   //parent.jct is an ALIAS of JAction
