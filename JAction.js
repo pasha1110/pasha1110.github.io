@@ -56,7 +56,7 @@ or in the web:
   JAction.style = function (id, style) {
 
     // select the element
-    let el = JAction.select(id)
+    let el = JAction.select(id) || id
 
     // define the variable
     var i, ell, nel;
@@ -81,7 +81,7 @@ or in the web:
   JAction.styleInline = function (id, prop, val, priority = "") {
 
     // get the element
-    let el = JAction.select(id)
+    let el = JAction.select(id) || id
 
     // define the variable
     var i, ell, nel;
@@ -100,7 +100,7 @@ or in the web:
 
   // getting style from the element
   JAction.getStyle = function (id) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     return el.style
   }
 
@@ -108,11 +108,11 @@ or in the web:
   JAction.getAttr = function (id, propertyName) {
 
     // select the element
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
 
     // if the propertyName is not a string
     if (typeof propertyName !== "string") {
-      throw new Error("JActionError: type of attr name must be a string! receive",typeof propertyName)
+      throw new Error("JActionError: type of attr name must be a string! receive", typeof propertyName)
     }
     return el.getAttribute(propertyName)
   }
@@ -122,11 +122,11 @@ or in the web:
   JAction.setAttr = function (id, prop, val) {
 
     // get the element
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
 
     // if the prop is not a string 
     if (typeof prop !== "string") {
-      throw new Error("JActionError: type of prop name must be a string! receive",typeof prop)
+      throw new Error("JActionError: type of prop name must be a string! receive", typeof prop)
     }
     el.setAttribute(prop, val)
   }
@@ -135,11 +135,11 @@ or in the web:
   JAction.setEvent = function (id, event, fn) {
 
     // get the element
-    var el = JAction.selectSpecific(id)
+    var el = JAction.selectSpecific(id) || id
 
     // if event is not a string
     if (typeof event !== "string") {
-      throw new Error("JActionError: type of event must be a string! receive",typeof event)
+      throw new Error("JActionError: type of event must be a string! receive", typeof event)
     }
     el.addEventListener(event, fn)
   }
@@ -148,24 +148,24 @@ or in the web:
   JAction.setHTML = function (id, html) {
 
     // get the element
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
 
     // set the element html content
     el.innerHTML = html
   }
 
   JAction.setText = function (id, text) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     el.innerText = text
   }
 
   JAction.getHTML = function (id) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     return el.innerHTML
   }
 
   JAction.getText = function (id) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     if (typeof el.innerText === "undefined") {
       return el.textContent
     } else {
@@ -174,17 +174,17 @@ or in the web:
   }
 
   JAction.appendHTML = function (id, html) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     el.innerHTML += html
   }
 
   JAction.appendText = function (id, text) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     el.innerText += text
   }
 
   JAction.getValue = function (id) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     return el.value
   }
 
@@ -198,7 +198,7 @@ or in the web:
   }
 
   JAction.toggle = function (id) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     if (el.style.display == "none") {
       JAction.styleInline(id, "display", "block")
     } else {
@@ -219,7 +219,7 @@ or in the web:
   }
 
   JAction.appendElement = function (id, nodeElement) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     el.appendChild(nodeElement)
   }
 
@@ -338,25 +338,25 @@ or in the web:
   }
 
   JAction.moveElement = function (id, target) {
-    const el = JAction.selectSpecific(id)
-    const elTarget = JAction.selectSpecific(target)
+    const el = JAction.selectSpecific(id) || id
+    const elTarget = JAction.selectSpecific(target) || id
     elTarget.appendChild(el)
   }
 
   JAction.styleSpecific = function (id, prop, val, priority = "") {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     el.style.setProperty(prop, val, priority)
   }
 
   JAction.cssSpecific = function (id, style) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     for (const [prop, val] of Object.entries(style)) {
       el.style[prop] = val
     }
   }
 
   JAction.toggleClass = function (id, classname) {
-    let el = JAction.selectSpecific(id)
+    let el = JAction.selectSpecific(id) || id
     el.classList.toggle(classname)
   }
 
@@ -372,7 +372,7 @@ or in the web:
   }
 
   JAction.fadeIn = function (id, dur = "1000") {
-    // let el = JAction.selectSpecific(id)
+    // let el = JAction.selectSpecific(id) || id
     JAction.styleInline(id, "transition", `${dur}ms`)
     JAction.style(id, {
       "opacity": "1"
@@ -399,70 +399,103 @@ or in the web:
     JAction.setEventAll(id, "mouseenter", f1)
     JAction.setEventAll(id, "mouseleave", f2)
   }
-  
-  JAction.createAttr = function (attrName,attrValue){
+
+  JAction.createAttr = function (attrName, attrValue) {
     let ca, cv;
     cv = attrValue
-    ca = document.createAttribute (attrName)
+    ca = document.createAttribute(attrName)
     ca.value = cv
 
     return ca
   }
-  
-  JAction.removeAttr = function (id,attrName){
-    let el = JAction.selectSpecific (id)
-    el.removeAttribute (attrName)
-  }
-  
-  JAction.setClass = function (id,className){
-    let elId = JAction.selectSpecific (id)
-    let createClass = JAction.createAttr ("class",className)
-  
-    elId.setAttributeNode (createClass)
-  }
-  
-  JAction.getClass = function (id){
-    return JAction.getAttr (id,"class")
-  }
-  
-  JAction.setId = function (id,idName){
-    let elId = JAction.selectSpecific (id)
-    let createId = JAction.createAttr ("id",idName)
-    
-    elId.setAttributeNode (createId)
-  }
-  
-  JAction.getId = function (id){
-    return JAction.getAttr (id,"id")
-  }
-  
-  JAction.setLink = function (id,link){
-    let elid = JAction.selectSpecific (id)
-    let createHref = JAction.createAttr ("href",link)
-    
-    elid.setAttributeNode (createHref)
-  }
-  
-  JAction.getLink = function (id){
-    return JAction.getAttr (id,"href")
+
+  JAction.removeAttr = function (id, attrName) {
+    let el = JAction.selectSpecific(id) || id
+    el.removeAttribute(attrName)
   }
 
-   JAction.toggleFade = function (id,dur=1000){
-     let el = JAction.selectSpecific (id)
-     if (el.style.opacity == "0"){
-       JAction.fadeIn (id,dur)
-     }else {
-       JAction.fadeOut (id,dur)
-     }
-   }
+  JAction.setClass = function (id, className) {
+    let elId = JAction.selectSpecific(id) || id
+    let createClass = JAction.createAttr("class", className)
 
-  //parent is a public Object, embedded on window Object
+    elId.setAttributeNode(createClass)
+  }
 
-  //parent.jct is an ALIAS of JAction
-  parent.jct = JAction
+  JAction.getClass = function (id) {
+    return JAction.getAttr(id, "class")
+  }
 
-  //parent.JAction is the default Object
-  parent.JAction = JAction
+  JAction.setId = function (id, idName) {
+    let elId = JAction.selectSpecific(id) || id
+    let createId = JAction.createAttr("id", idName)
+
+    elId.setAttributeNode(createId)
+  }
+
+  JAction.getId = function (id) {
+    return JAction.getAttr(id, "id")
+  }
+
+  JAction.setLink = function (id, link) {
+    let elid = JAction.selectSpecific(id) || id
+    let createHref = JAction.createAttr("href", link)
+
+    elid.setAttributeNode(createHref)
+  }
+
+  JAction.getLink = function (id) {
+    return JAction.getAttr(id, "href")
+  }
+
+  JAction.toggleFade = function (id, dur = 1000) {
+    let el = JAction.selectSpecific(id) || id
+    if (el.style.opacity == "0") {
+      JAction.fadeIn(id, dur)
+    } else {
+      JAction.fadeOut(id, dur)
+    }
+  }
+
+  JAction.getStyle = function (id, prop) {
+    let el = JAction.selectSpecific(id) || id;
+    if (typeof prop !== "string") {
+      console.error("typeof prop must be a string!, received: ", typeof prop)
+    }
+
+    let getStyle = window.getComputedStyle(el, null).getPropertyValue(prop)
+
+    return getStyle
+  }
+
+  JAction.each = function (id, cb) {
+    let el = JAction.select(id) || id
+    el.forEach(cb)
+  }
+
+  JAction.displayData = function (target, data) {
+    textContent = JAction.getHTML(target) || target
+    textContent = eval('`' + textContent + '`')
+
+    JAction.setHTML(target, textContent)
+
+    const render = (target, vl) => {
+
+      textContent = eval('`' + textContent + '`')
+
+      JAction.setHTML(target, vl)
+
+    }
+
+    return new Proxy(data, {
+      set(id, property, value) {
+        id[property] = value
+        render(target, id[property] = value)
+
+        return true
+      }
+    })
+
+  }
 
 
   function notIE(ajax) {
@@ -497,4 +530,22 @@ or in the web:
     xml.send()
 
   }
+
+  // exporting sessions
+  try {
+    module.exports.jct = JAction
+  } catch (err) {
+    //parent is a public Object, embedded on window Object
+
+    //parent.jct is an ALIAS of JAction
+    parent.jct = JAction
+
+    //parent.JAction is the default Object
+    parent.JAction = JAction
+  }
+
+
 }(window))
+
+// made by LOVE 
+// ~by Erlangga
