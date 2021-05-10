@@ -472,30 +472,63 @@ or in the web:
     el.forEach(cb)
   }
 
-  JAction.displayData = function (target, data) {
-    textContent = JAction.getHTML(target) || target
-    textContent = eval('`' + textContent + '`')
+  JAction.getElementId = function (id) {
+    return document.getElementById(id)
+  }
 
-    JAction.setHTML(target, textContent)
-
-    const render = (target, vl) => {
-
-      textContent = eval('`' + textContent + '`')
-
-      JAction.setHTML(target, vl)
-
-    }
-
-    return new Proxy(data, {
-      set(id, property, value) {
-        id[property] = value
-        render(target, id[property] = value)
-
-        return true
+  JAction.loadJSON = function (url, cb) {
+    JAction.doAjax({
+      url: url,
+      method: "GET",
+      action: function (data) {
+        let jsonData = JSON.parse(data) || data
+        cb(jsonData)
       }
     })
-
   }
+
+  JAction.displayData = function (target, data) {
+
+    function Render(ElementTarget, data) {
+      // this.renderTarget = ElementTarget
+      // this.renderData = data
+
+      let target = document.getElementById(ElementTarget)
+      let html = target.innerHTML
+
+      return html.replace(/{{(.*?)}}/g, (match) => {
+        let regex = match.split(/{{|}}/).filter(Boolean)[0].trim()
+        let magic = data[regex]
+        if (typeof magic === "undefined") {
+          let rule = eval('`${' + regex + '}`')
+          return rule
+        } else {
+          let dataRepeater = target.getAttribute("data-repeat")
+          if (dataRepeater) {
+            let getObject = eval(dataRepeater)
+            if (typeof getObject !== "object") {
+              console.log("Type of data must be an Object")
+            }
+            let i = 0;
+            while (i < getObject.length) {
+              let html = ""
+              html += getObject[i][regex]
+              console.log(getObject[i][regex]);
+              i++
+              return html
+            }
+          } else {
+            return magic
+          }
+        }
+      })
+    }
+
+    let renderContent = Render(target, data)
+    document.getElementById(target).innerHTML = renderContent
+  }
+
+
 
 
   function notIE(ajax) {
@@ -546,6 +579,7 @@ or in the web:
 
 
 }(window))
+
 
 // made by LOVE 
 // ~by Erlangga
